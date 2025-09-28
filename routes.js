@@ -28,7 +28,7 @@ router.get(
 // Send a GET request to /quotes/:id to READ (view) a quote
 router.get(
   '/quotes/:id',
-  asyncHandler(async (req, res) => {
+  asyncHandler(async (req, res, next) => {
     const quote = await records.getQuote(req.params.id)
     if (quote) {
       res.json(quote)
