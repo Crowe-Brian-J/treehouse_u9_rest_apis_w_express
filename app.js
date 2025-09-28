@@ -22,7 +22,7 @@ app.get('/quotes/:id', async (req, res) => {
 
 // Send a POST request to /quotes CREATE a new quote
 app.post('/quotes', async (req, res) => {
-  const newQuote = records.createQuote({
+  const newQuote = await records.createQuote({
     quote: req.body.quote,
     author: req.body.author
   })
