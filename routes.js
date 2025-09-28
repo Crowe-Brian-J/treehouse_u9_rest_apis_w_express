@@ -1,5 +1,6 @@
 const express = require('express')
 const router = express.Router()
+router.use(express.json())
 
 // Import data.json
 const records = require('./records')
@@ -101,5 +102,16 @@ router.delete(
 )
 
 // Send a GET request to /quotes/quote/random to READ a random quote
+router.get(
+  '/quotes/quote/random',
+  asyncHandler(async (req, res) => {
+    const quote = await records.getRandomQuote()
+    if (quote) {
+      res.json(quote)
+    } else {
+      res.status(404).json({ message: 'Sorry! Random Quote not found.' })
+    }
+  })
+)
 
 module.exports = router
