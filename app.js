@@ -9,24 +9,36 @@ app.use(express.json())
 
 // Send a GET request to /quotes to READ a list of quotes
 app.get('/quotes', async (req, res) => {
-  const quotes = await records.getQuotes()
-  res.json(quotes)
+  try {
+    const quotes = await records.getQuotes()
+    res.json(quotes)
+  } catch (error) {
+    res.json({ message: error.message })
+  }
 })
 
 // Send a GET request to /quotes/:id to READ (view) a quote
 app.get('/quotes/:id', async (req, res) => {
-  const reqId = parseInt(req.params.id)
-  const quote = await records.getQuote(reqId)
-  res.json(quote)
+  try {
+    const reqId = parseInt(req.params.id)
+    const quote = await records.getQuote(reqId)
+    res.json(quote)
+  } catch (error) {
+    res.json({ message: error.message })
+  }
 })
 
 // Send a POST request to /quotes CREATE a new quote
 app.post('/quotes', async (req, res) => {
-  const newQuote = await records.createQuote({
-    quote: req.body.quote,
-    author: req.body.author
-  })
-  res.json(newQuote)
+  try {
+    const newQuote = await records.createQuote({
+      quote: req.body.quote,
+      author: req.body.author
+    })
+    res.json(newQuote)
+  } catch (error) {
+    res.json({ message: error.message })
+  }
 })
 
 // Send a PUT request to /quotes/:id UPDATE (edit) a quote
