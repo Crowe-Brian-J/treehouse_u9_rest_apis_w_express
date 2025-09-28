@@ -4,6 +4,9 @@ const app = express()
 // Import data.json
 const records = require('./records')
 
+// Express Middleware
+app.use(express.json())
+
 // Send a GET request to /quotes to READ a list of quotes
 app.get('/quotes', async (req, res) => {
   const quotes = await records.getQuotes()
@@ -18,7 +21,13 @@ app.get('/quotes/:id', async (req, res) => {
 })
 
 // Send a POST request to /quotes CREATE a new quote
-app.post('/quotes', async (req, res) => {})
+app.post('/quotes', async (req, res) => {
+  const newQuote = records.createQuote({
+    quote: req.body.quote,
+    author: req.body.author
+  })
+  res.json(newQuote)
+})
 
 // Send a PUT request to /quotes/:id UPDATE (edit) a quote
 // Send a DELETE request /quotes/:id to DELETE a quote
