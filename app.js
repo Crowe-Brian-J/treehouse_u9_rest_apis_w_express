@@ -11,10 +11,14 @@ app.get('/quotes', async (req, res) => {
 })
 
 // Send a GET request to /quotes/:id to READ (view) a quote
-app.get('/quotes/:id', (req, res) => {})
+app.get('/quotes/:id', async (req, res) => {
+  const reqId = parseInt(req.params.id)
+  const quote = await records.getQuote(reqId)
+  res.json(quote)
+})
 
 // Send a POST request to /quotes CREATE a new quote
-app.post('/quotes', (req, res) => {})
+app.post('/quotes', async (req, res) => {})
 
 // Send a PUT request to /quotes/:id UPDATE (edit) a quote
 // Send a DELETE request /quotes/:id to DELETE a quote
