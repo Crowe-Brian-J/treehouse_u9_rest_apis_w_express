@@ -4,36 +4,62 @@ const app = express()
 // Import data.json
 const records = require('./records')
 
+// Clean up try...catch blocks with asyncHandler
+const asyncHandler = (cb) => {
+  return async (req, res, next) => {
+    try {
+      await cb(req, res, next)
+    } catch (error) {
+      next(error)
+    }
+  }
+}
+
 // Express Middleware
 app.use(express.json())
 
 // Send a GET request to /quotes to READ a list of quotes
-app.get('/quotes', async (req, res) => {
-  try {
+app.get(
+  '/quotes',
+  asyncHandler(async (req, res) => {
     const quotes = await records.getQuotes()
     res.json(quotes)
-  } catch (error) {
-    res.json({ message: error.message })
-  }
-})
+  })
+)
 
 // Send a GET request to /quotes/:id to READ (view) a quote
-app.get('/quotes/:id', async (req, res) => {
-  try {
+app.get(
+  '/quotes/:id',
+  asyncHandler(async (req, res) => {
     const quote = await records.getQuote(req.params.id)
     if (quote) {
       res.json(quote)
     } else {
       res.status(404).json({ message: 'Sorry! Quote not found.' })
     }
-  } catch (error) {
-    res.json({ message: error.message })
-  }
-})
+  })
+)
 
-// Send a POST request to /quotes CREATE a new quote
-app.post('/quotes', async (req, res) => {
-  try {
+// Send a POST request to /quotes CREATE a new quote -> leaving commented code to demonstrate asyncHandler
+// app.post('/quotes', async (req, res) => {
+//   try {
+//     if (req.body.author && req.body.quote) {
+//       const newQuote = await records.createQuote({
+//         quote: req.body.quote,
+//         author: req.body.author
+//       })
+//       res.status(201).json(newQuote)
+//     } else {
+//       res.status(400).json({ message: 'Quote and author required.' })
+//     }
+//   } catch (error) {
+//     res.status(500).json({ message: error.message })
+//   }
+// })
+
+app.post(
+  '/quotes',
+  asyncHandler(async (req, res) => {
     if (req.body.author && req.body.quote) {
       const newQuote = await records.createQuote({
         quote: req.body.quote,
@@ -43,14 +69,13 @@ app.post('/quotes', async (req, res) => {
     } else {
       res.status(400).json({ message: 'Quote and author required.' })
     }
-  } catch (error) {
-    res.status(500).json({ message: error.message })
-  }
-})
+  })
+)
 
 // Send a PUT request to /quotes/:id UPDATE (edit) a quote
-app.put('/quotes/:id', async (req, res) => {
-  try {
+app.put(
+  '/quotes/:id',
+  asyncHandler(async (req, res) => {
     const quote = await records.getQuote(req.params.id)
     if (quote) {
       quote.quote = req.body.quote
@@ -61,14 +86,13 @@ app.put('/quotes/:id', async (req, res) => {
     } else {
       res.status(404).json({ message: 'Quote Not Found' })
     }
-  } catch (error) {
-    res.status(500).json({ message: error.message })
-  }
-})
+  })
+)
 
 // Send a DELETE request /quotes/:id to DELETE a quote
-app.delete('/quotes/:id', async (req, res) => {
-  try {
+app.delete(
+  '/quotes/:id',
+  asyncHandler(async (req, res) => {
     const quote = await records.getQuote(req.params.id)
     if (quote) {
       await records.deleteQuote(quote)
@@ -76,10 +100,8 @@ app.delete('/quotes/:id', async (req, res) => {
     } else {
       res.status(404).json({ message: 'Quote Not Found' })
     }
-  } catch (error) {
-    res.status(500).json({ message: error.message })
-  }
-})
+  })
+)
 
 // Send a GET request to /quotes/quote/random to READ a random quote
 
@@ -90,7 +112,7 @@ app.use((req, res, next) => {
   next(err)
 })
 
-// Error Handling Middleware
+// Global Error Handler
 app.use((err, req, res, next) => {
   res.status(err.status || 500)
   res.json({
