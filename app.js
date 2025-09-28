@@ -22,7 +22,11 @@ app.get('/quotes/:id', async (req, res) => {
   try {
     const reqId = parseInt(req.params.id)
     const quote = await records.getQuote(reqId)
-    res.json(quote)
+    if (quote) {
+      res.json(quote)
+    } else {
+      res.status(404).json({ message: 'Sorry! Quote not found.' })
+    }
   } catch (error) {
     res.json({ message: error.message })
   }
@@ -31,13 +35,17 @@ app.get('/quotes/:id', async (req, res) => {
 // Send a POST request to /quotes CREATE a new quote
 app.post('/quotes', async (req, res) => {
   try {
-    const newQuote = await records.createQuote({
-      quote: req.body.quote,
-      author: req.body.author
-    })
-    res.json(newQuote)
+    if (req.body.author && req.body.quote) {
+      const newQuote = await records.createQuote({
+        quote: req.body.quote,
+        author: req.body.author
+      })
+      res.status(201).json(newQuote)
+    } else {
+      res.status(400).json({ message: 'Quote and author required.' })
+    }
   } catch (error) {
-    res.json({ message: error.message })
+    res.status(500).json({ message: error.message })
   }
 })
 
